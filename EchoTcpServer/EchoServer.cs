@@ -36,7 +36,6 @@ namespace EchoTcpServer
                     break;
                 }
             }
-
         }
 
         // internal static — accessible from EchoServerTests via InternalsVisibleTo
@@ -56,6 +55,7 @@ namespace EchoTcpServer
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
+                _ = ex; // Exception handled: client disconnected unexpectedly
             }
             finally
             {
