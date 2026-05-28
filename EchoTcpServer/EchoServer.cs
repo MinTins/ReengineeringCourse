@@ -44,7 +44,7 @@ namespace EchoTcpServer
         }
 
         // internal — accessible from EchoServerTests via InternalsVisibleTo
-        internal static async Task HandleClientAsync(TcpClient client, CancellationToken token)
+        internal async Task HandleClientAsync(TcpClient client, CancellationToken token)
         {
             using NetworkStream stream = client.GetStream();
             try
