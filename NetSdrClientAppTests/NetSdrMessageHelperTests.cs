@@ -298,5 +298,44 @@ namespace NetSdrClientAppTests
         });
     }
 
+        [Test]
+        public void GetHeader_DataItem_MaxLength_EdgeCase()
+        {
+            // DataItem з параметрами що дають рівно _maxDataItemMessageLength (8194)
+            // 8194 - 2 (header) = 8192 bytes params
+            var msg = NetSdrMessageHelper.GetDataItemMessage(
+                NetSdrMessageHelper.MsgTypes.DataItem0,
+                new byte[8192]);
+            // lengthWithHeader == 8194 → встановлюється 0
+            var headerVal = BitConverter.ToUInt16(msg.Take(2).ToArray());
+            var msgType = (NetSdrMessageHelper.MsgTypes)(headerVal >> 13);
+            Assert.That(msgType, Is.EqualTo(NetSdrMessageHelper.MsgTypes.DataItem0));
+        }
+
+        [Test]
+        public void TranslateMessage_DataItem_MaxLength_EdgeCase()
+        {
+            // Перевірити що TranslateHeader правильно обробляє msgLength == 0
+            var msg = NetSdrMessageHelper.GetDataItemMessage(
+                NetSdrMessageHelper.MsgTypes.DataItem0,
+                new byte[8192]);
+            var success = NetSdrMessageHelper.TranslateMessage(
+                msg, out var outType, out _, out _, out var body);
+            Assert.Multiple(() =>
+            {
+                Assert.That(success, Is.True);
+                Assert.That(outType, Is.EqualTo(NetSdrMessageHelper.MsgTypes.DataItem0));
+                Assert.That(body, Has.Length.EqualTo(8192));
+            });
+        }
+
+        [Test]
+        public void GetSamples_ReturnsCorrectType()
+        {
+            // Перевірити що GetSamples повертає IEnumerable
+            var result = NetSdrMessageHelper.GetSamples(16, new byte[] { 0x01, 0x00 });
+            Assert.That(result, Is.Not.Null);
+        }
+
     }
 }

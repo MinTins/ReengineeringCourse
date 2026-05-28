@@ -209,5 +209,45 @@ namespace EchoServerTests
             _listenerMock.Verify(l => l.Stop(), Times.Once);
         }
 
+        [Test]
+        public async Task HandleClientAsync_MultipleChunks_EchoesAll()
+        {
+            using var serverSocket = new TcpListener(System.Net.IPAddress.Loopback, 0);
+            serverSocket.Start();
+            int port = ((System.Net.IPEndPoint)serverSocket.LocalEndpoint).Port;
+
+            using var clientTcp = new TcpClient();
+            await clientTcp.ConnectAsync(System.Net.IPAddress.Loopback, port);
+            using var serverClient = await serverSocket.AcceptTcpClientAsync();
+            serverSocket.Stop();
+
+            var cts = new CancellationTokenSource();
+            var handleTask = EchoServer.HandleClientAsync(serverClient, cts.Token);
+
+            var clientStream = clientTcp.GetStream();
+
+            // Надіслати два чанки
+            byte[] chunk1 = new byte[] { 0x01, 0x02 };
+            byte[] chunk2 = new byte[] { 0x03, 0x04 };
+
+            await clientStream.WriteAsync(chunk1.AsMemory());
+            byte[] recv1 = new byte[2];
+            await clientStream.ReadAsync(recv1.AsMemory());
+
+            await clientStream.WriteAsync(chunk2.AsMemory());
+            byte[] recv2 = new byte[2];
+            await clientStream.ReadAsync(recv2.AsMemory());
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(recv1, Is.EqualTo(chunk1));
+                Assert.That(recv2, Is.EqualTo(chunk2));
+            });
+
+            cts.Cancel();
+            clientTcp.Close();
+            await Task.WhenAny(handleTask, Task.Delay(1000));
+        }
+
     }
 }
