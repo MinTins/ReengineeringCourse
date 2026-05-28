@@ -325,7 +325,7 @@ namespace NetSdrClientAppTests
             {
                 Assert.That(success, Is.True);
                 Assert.That(outType, Is.EqualTo(NetSdrMessageHelper.MsgTypes.DataItem0));
-                Assert.That(body, Has.Length.EqualTo(8192));
+                Assert.That(body, Has.Length.EqualTo(8190)); // 8192 - 2 sequence number bytes
             });
         }
 
