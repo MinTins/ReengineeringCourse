@@ -18,7 +18,7 @@ namespace NetSdrClientApp.Networking
         private readonly int _port;
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
         public bool Connected => _tcpClient != null && _tcpClient.Connected && _stream != null;
 
@@ -62,7 +62,7 @@ namespace NetSdrClientApp.Networking
                 _stream?.Close();
                 _tcpClient?.Close();
 
-                _cts = null;
+                _cts = null!;
                 _tcpClient = null;
                 _stream = null;
                 Console.WriteLine("Disconnected.");
@@ -78,7 +78,7 @@ namespace NetSdrClientApp.Networking
             if (Connected && _stream != null && _stream.CanWrite)
             {
                 Console.WriteLine($"Message sent: " + data.Select(b => Convert.ToString(b, toBase: 16)).Aggregate((l, r) => $"{l} {r}"));
-                await _stream.WriteAsync(data, 0, data.Length);
+                await _stream.WriteAsync(data.AsMemory(0, data.Length));
             }
             else
             {
@@ -104,7 +104,7 @@ namespace NetSdrClientApp.Networking
                     {
                         byte[] buffer = new byte[8194];
 
-                        int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length, _cts.Token);
+                        int bytesRead = await _stream.ReadAsync(buffer.AsMemory(0, buffer.Length), _cts.Token);
                         if (bytesRead > 0)
                         {
                             MessageReceived?.Invoke(this, buffer.AsSpan(0, bytesRead).ToArray());

@@ -30,7 +30,7 @@ namespace NetSdrClientAppTests
             var actualCode = BitConverter.ToInt16(codeBytes.ToArray());
 
             //Assert
-            Assert.That(headerBytes.Count(), Is.EqualTo(2));
+            Assert.That(headerBytes, Has.Count.EqualTo(2));
             Assert.That(msg.Length, Is.EqualTo(actualLength));
             Assert.That(type, Is.EqualTo(actualType));
 
@@ -57,7 +57,7 @@ namespace NetSdrClientAppTests
             var actualLength = num - ((int)actualType << 13);
 
             //Assert
-            Assert.That(headerBytes.Count(), Is.EqualTo(2));
+            Assert.That(headerBytes, Has.Count.EqualTo(2));
             Assert.That(msg.Length, Is.EqualTo(actualLength));
             Assert.That(type, Is.EqualTo(actualType));
 
@@ -72,7 +72,7 @@ namespace NetSdrClientAppTests
                 NetSdrMessageHelper.ControlItemCodes.ReceiverFrequency,
                 new byte[6]);
 
-            Assert.That(msg.Length, Is.EqualTo(10)); // 2 header + 2 code + 6 params
+            Assert.That(msg, Has.Length.EqualTo(10)); // 2 header + 2 code + 6 params
         }
 
         [Test]
@@ -95,9 +95,9 @@ namespace NetSdrClientAppTests
         {
             var msg = NetSdrMessageHelper.GetDataItemMessage(
                 NetSdrMessageHelper.MsgTypes.DataItem0,
-                new byte[0]);
+                Array.Empty<byte>());
 
-            Assert.That(msg.Length, Is.EqualTo(2)); // тільки header
+            Assert.That(msg, Has.Length.EqualTo(2)); // тільки header
         }
 
         [Test]
@@ -200,7 +200,7 @@ namespace NetSdrClientAppTests
         [Test]
         public void GetSamples_EmptyBody_ReturnsNoSamples()
         {
-            var samples = NetSdrMessageHelper.GetSamples(16, new byte[0]).ToList();
+            var samples = NetSdrMessageHelper.GetSamples(16, Array.Empty<byte>()).ToList();
 
             Assert.That(samples.Count, Is.EqualTo(0));
         }
@@ -232,10 +232,10 @@ namespace NetSdrClientAppTests
             var msg = NetSdrMessageHelper.GetControlItemMessage(
                 NetSdrMessageHelper.MsgTypes.CurrentControlItem,
                 NetSdrMessageHelper.ControlItemCodes.ADModes,
-                new byte[0]);
+                Array.Empty<byte>());
 
             // 2 байти header + 2 байти code = 4
-            Assert.That(msg.Length, Is.EqualTo(4));
+            Assert.That(msg, Has.Length.EqualTo(4));
         }
 
         [Test]
@@ -247,7 +247,7 @@ namespace NetSdrClientAppTests
                 parameters);
 
             // 2 байти header + 2 байти parameters = 4 (без code)
-            Assert.That(msg.Length, Is.EqualTo(4));
+            Assert.That(msg, Has.Length.EqualTo(4));
         }
     }
 }
