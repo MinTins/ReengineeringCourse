@@ -33,7 +33,7 @@ namespace EchoTcpServer
         {
             try
             {
-                Random rnd = new Random();
+                Random rnd = new Random(); // NOSONAR - pseudorandom is acceptable for test data
                 byte[] samples = new byte[1024];
                 rnd.NextBytes(samples);
                 _counter++;

@@ -94,7 +94,7 @@ namespace EchoServerTests
             serverSocket.Stop();
 
             var cts = new CancellationTokenSource();
-            var handleTask = _server.HandleClientAsync(serverClient, cts.Token);
+            var handleTask = EchoTcpServer.EchoServer.HandleClientAsync(serverClient, cts.Token);
 
             // Act: надіслати дані і прочитати echo
             byte[] sent = new byte[] { 0x01, 0x02, 0x03, 0x04 };
@@ -134,7 +134,7 @@ namespace EchoServerTests
 
             // Act: скасувати токен одразу
             cts.Cancel();
-            var handleTask = _server.HandleClientAsync(serverClient, cts.Token);
+            var handleTask = EchoTcpServer.EchoServer.HandleClientAsync(serverClient, cts.Token);
             await Task.WhenAny(handleTask, Task.Delay(2000));
 
             // Assert — завершилось без зависання
@@ -159,7 +159,7 @@ namespace EchoServerTests
 
             // Act
             await Task.WhenAny(
-                _server.HandleClientAsync(serverClient, cts.Token),
+                EchoTcpServer.EchoServer.HandleClientAsync(serverClient, cts.Token),
                 Task.Delay(2000));
 
             // Assert — після завершення клієнт закритий

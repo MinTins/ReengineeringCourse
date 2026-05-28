@@ -77,3 +77,4 @@ public class UdpClientWrapper : IUdpClient
         return BitConverter.ToInt32(hash, 0);
     }
 }
+}
