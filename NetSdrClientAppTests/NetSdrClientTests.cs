@@ -176,3 +176,59 @@ public class NetSdrClientTests
         Assert.That(_client.IQStarted, Is.False);
     }
 }
+
+// ---- Lab 8: additional tests for coverage ≥80% on new code ----
+public partial class NetSdrClientAdditionalTests
+{
+    NetSdrClient _client = null!;
+    Mock<ITcpClient> _tcpMock = null!;
+    Mock<IUdpClient> _udpMock = null!;
+
+    [SetUp]
+    public void AdditionalSetup()
+    {
+        _tcpMock = new Mock<ITcpClient>();
+        _tcpMock.Setup(tcp => tcp.Connect()).Callback(() =>
+            _tcpMock.Setup(tcp => tcp.Connected).Returns(true));
+        _tcpMock.Setup(tcp => tcp.Disconnect()).Callback(() =>
+            _tcpMock.Setup(tcp => tcp.Connected).Returns(false));
+        _tcpMock.Setup(tcp => tcp.SendMessageAsync(It.IsAny<byte[]>())).Callback<byte[]>(bytes =>
+            _tcpMock.Raise(tcp => tcp.MessageReceived += null, _tcpMock.Object, bytes));
+        _udpMock = new Mock<IUdpClient>();
+        _client = new NetSdrClient(_tcpMock.Object, _udpMock.Object);
+    }
+
+    [Test]
+    public async Task ConnectAsync_AlreadyConnected_DoesNotConnectAgain()
+    {
+        await _client.ConnectAsync();
+        await _client.ConnectAsync(); // другий виклик
+        _tcpMock.Verify(tcp => tcp.Connect(), Times.Once);
+    }
+
+    [Test]
+    public async Task StartIQ_ThenStop_IQStartedIsFalse()
+    {
+        await _client.ConnectAsync();
+        await _client.StartIQAsync();
+        Assert.That(_client.IQStarted, Is.True);
+        await _client.StopIQAsync();
+        Assert.That(_client.IQStarted, Is.False);
+    }
+
+    [Test]
+    public async Task ChangeFrequency_ZeroHz_SendsMessage()
+    {
+        await _client.ConnectAsync();
+        await _client.ChangeFrequencyAsync(0, 0);
+        _tcpMock.Verify(tcp => tcp.SendMessageAsync(It.IsAny<byte[]>()), Times.Exactly(4));
+    }
+
+    [Test]
+    public async Task ChangeFrequency_MaxHz_SendsMessage()
+    {
+        await _client.ConnectAsync();
+        await _client.ChangeFrequencyAsync(long.MaxValue, 1);
+        _tcpMock.Verify(tcp => tcp.SendMessageAsync(It.IsAny<byte[]>()), Times.Exactly(4));
+    }
+}
