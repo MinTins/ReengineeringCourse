@@ -98,6 +98,8 @@ namespace NetSdrClientApp
 
         public async Task ChangeFrequencyAsync(long hz, int channel)
         {
+            if (!EnsureConnected()) return;
+
             var channelArg = (byte)channel;
             var frequencyArg = BitConverter.GetBytes(hz).Take(5);
             var args = new[] { channelArg }.Concat(frequencyArg).ToArray();

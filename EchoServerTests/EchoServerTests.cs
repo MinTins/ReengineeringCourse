@@ -232,11 +232,11 @@ namespace EchoServerTests
 
             await clientStream.WriteAsync(chunk1.AsMemory());
             byte[] recv1 = new byte[2];
-            await clientStream.ReadAsync(recv1.AsMemory());
+            await ReadExactAsync(clientStream, recv1, recv1.Length);
 
             await clientStream.WriteAsync(chunk2.AsMemory());
             byte[] recv2 = new byte[2];
-            await clientStream.ReadAsync(recv2.AsMemory());
+            await ReadExactAsync(clientStream, recv2, recv2.Length);
 
             Assert.Multiple(() =>
             {
@@ -247,6 +247,19 @@ namespace EchoServerTests
             cts.Cancel();
             clientTcp.Close();
             await Task.WhenAny(handleTask, Task.Delay(1000));
+        }
+
+        private static async Task ReadExactAsync(
+            System.IO.Stream stream, byte[] buffer, int count)
+        {
+            int offset = 0;
+            while (offset < count)
+            {
+                int read = await stream.ReadAsync(
+                    buffer.AsMemory(offset, count - offset));
+                if (read == 0) break;
+                offset += read;
+            }
         }
 
     }
