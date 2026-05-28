@@ -42,6 +42,7 @@ namespace NetSdrClientApp.Networking
 
             try
             {
+                _cts?.Dispose();
                 _cts = new CancellationTokenSource();
                 _tcpClient.Connect(_host, _port);
                 _stream = _tcpClient.GetStream();
@@ -59,10 +60,11 @@ namespace NetSdrClientApp.Networking
             if (Connected)
             {
                 _cts?.Cancel();
+                _cts?.Dispose();
                 _stream?.Close();
                 _tcpClient?.Close();
 
-                _cts = null!;
+                _cts = null;
                 _tcpClient = null;
                 _stream = null;
                 Console.WriteLine("Disconnected.");

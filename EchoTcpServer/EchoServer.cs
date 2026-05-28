@@ -44,6 +44,7 @@ namespace EchoTcpServer
         }
 
         // internal — accessible from EchoServerTests via InternalsVisibleTo
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Sonar", "S2325", Justification = "Instance method needed for testability via InternalsVisibleTo")]
         internal async Task HandleClientAsync(TcpClient client, CancellationToken token)
         {
             using NetworkStream stream = client.GetStream();

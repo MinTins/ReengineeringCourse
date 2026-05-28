@@ -25,6 +25,7 @@ public class UdpClientWrapper : IUdpClient
 
     public async Task StartListeningAsync()
     {
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         Console.WriteLine("Start listening for UDP messages...");
 
@@ -54,6 +55,8 @@ public class UdpClientWrapper : IUdpClient
         try
         {
             _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
             _udpClient?.Close();
             Console.WriteLine("Stopped listening for UDP messages.");
         }
