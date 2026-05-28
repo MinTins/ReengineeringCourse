@@ -249,7 +249,7 @@ namespace NetSdrClientAppTests
             // 2 байти header + 2 байти parameters = 4 (без code)
             Assert.That(msg, Has.Length.EqualTo(4));
         }
-    }
+
     // Lab8: coverage for IterateSamples (split from GetSamples)
     [Test]
     public void GetSamples_16bit_OddBytes_IgnoresTrailingByte()
@@ -280,4 +280,5 @@ namespace NetSdrClientAppTests
         Assert.That(samples[1], Is.EqualTo(2));
     }
 
+    }
 }
