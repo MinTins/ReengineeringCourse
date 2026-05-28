@@ -121,5 +121,34 @@ namespace NetSdrClientAppTests
             _client.Disconect();
             _tcpMock.Verify(tcp => tcp.Disconnect(), Times.Once);
         }
+        // Покриваємо гілку де ConnectAsync вже connected
+        [Test]
+        public async Task ConnectAsync_WhenAlreadyConnected_DoesNotCallConnectAgain()
+        {
+            await _client.ConnectAsync();
+            var connectCallsBefore = 1;
+            await _client.ConnectAsync(); // вже connected
+            _tcpMock.Verify(tcp => tcp.Connect(), Times.Exactly(connectCallsBefore));
+        }
+
+        // StartIQ + StopIQ повний цикл з перевіркою UDP
+        [Test]
+        public async Task StartAndStop_FullCycle_UdpListenAndStop()
+        {
+            await _client.ConnectAsync();
+            await _client.StartIQAsync();
+            _udpMock.Verify(udp => udp.StartListeningAsync(), Times.Once);
+            await _client.StopIQAsync();
+            _udpMock.Verify(udp => udp.StopListening(), Times.Once);
+        }
+
+        // Перевірка що Disconect викликає Disconnect на tcp
+        [Test]
+        public void Disconect_CallsTcpDisconnect()
+        {
+            _client.Disconect();
+            _tcpMock.Verify(tcp => tcp.Disconnect(), Times.Once);
+        }
+
     }
 }

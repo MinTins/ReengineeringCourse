@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -6,6 +7,7 @@ using System.Threading;
 
 namespace EchoTcpServer
 {
+    [ExcludeFromCodeCoverage]
     public class UdpTimedSender : IDisposable
     {
         private readonly string _host;

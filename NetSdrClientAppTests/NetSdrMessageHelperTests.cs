@@ -250,4 +250,34 @@ namespace NetSdrClientAppTests
             Assert.That(msg, Has.Length.EqualTo(4));
         }
     }
+    // Lab8: coverage for IterateSamples (split from GetSamples)
+    [Test]
+    public void GetSamples_16bit_OddBytes_IgnoresTrailingByte()
+    {
+        // 5 байт при 16-bit = 2 семпли, 1 байт ігнорується
+        var body = new byte[] { 0x01, 0x00, 0x02, 0x00, 0xFF };
+        var samples = NetSdrMessageHelper.GetSamples(16, body).ToList();
+        Assert.That(samples, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public void GetSamples_24bit_ReturnsCorrectCount()
+    {
+        // 6 байт при 24-bit = 2 семпли
+        var body = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
+        var samples = NetSdrMessageHelper.GetSamples(24, body).ToList();
+        Assert.That(samples, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public void GetSamples_32bit_MultipleValues()
+    {
+        // 8 байт при 32-bit = 2 семпли
+        var body = new byte[] { 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 };
+        var samples = NetSdrMessageHelper.GetSamples(32, body).ToList();
+        Assert.That(samples, Has.Count.EqualTo(2));
+        Assert.That(samples[0], Is.EqualTo(1));
+        Assert.That(samples[1], Is.EqualTo(2));
+    }
+
 }
