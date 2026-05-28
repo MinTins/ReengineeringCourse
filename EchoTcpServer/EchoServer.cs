@@ -43,9 +43,8 @@ namespace EchoTcpServer
             Console.WriteLine("Server shutdown.");
         }
 
-        // internal — accessible from EchoServerTests via InternalsVisibleTo
-#pragma warning disable S2325 // Instance method needed for testability
-        internal async Task HandleClientAsync(TcpClient client, CancellationToken token)
+        // internal static — accessible from EchoServerTests via InternalsVisibleTo
+        internal static async Task HandleClientAsync(TcpClient client, CancellationToken token)
         {
             using NetworkStream stream = client.GetStream();
             try
