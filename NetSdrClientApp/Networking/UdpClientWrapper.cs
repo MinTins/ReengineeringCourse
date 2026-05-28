@@ -39,7 +39,7 @@ public class UdpClientWrapper : IUdpClient
                 Console.WriteLine($"Received from {result.RemoteEndPoint}");
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
             //empty
         }
@@ -68,11 +68,17 @@ public class UdpClientWrapper : IUdpClient
         StopListening();
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is UdpClientWrapper other &&
+               _localEndPoint.Equals(other._localEndPoint);
+    }
+
     public override int GetHashCode()
     {
         var payload = $"{nameof(UdpClientWrapper)}|{_localEndPoint.Address}|{_localEndPoint.Port}";
 
-        var hash = MD5.HashData(Encoding.UTF8.GetBytes(payload));
+        var hash = MD5.HashData(Encoding.UTF8.GetBytes(payload)); // NOSONAR - non-security use
 
         return BitConverter.ToInt32(hash, 0);
     }

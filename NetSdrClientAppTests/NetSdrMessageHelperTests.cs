@@ -30,7 +30,7 @@ namespace NetSdrClientAppTests
             var actualCode = BitConverter.ToInt16(codeBytes.ToArray());
 
             //Assert
-            Assert.That(headerBytes, Has.Count.EqualTo(2));
+            Assert.That(headerBytes.Count(), Is.EqualTo(2));
             Assert.That(msg.Length, Is.EqualTo(actualLength));
             Assert.That(type, Is.EqualTo(actualType));
 
@@ -57,7 +57,7 @@ namespace NetSdrClientAppTests
             var actualLength = num - ((int)actualType << 13);
 
             //Assert
-            Assert.That(headerBytes, Has.Count.EqualTo(2));
+            Assert.That(headerBytes.Count(), Is.EqualTo(2));
             Assert.That(msg.Length, Is.EqualTo(actualLength));
             Assert.That(type, Is.EqualTo(actualType));
 

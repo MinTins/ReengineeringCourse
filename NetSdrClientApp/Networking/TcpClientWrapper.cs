@@ -18,7 +18,7 @@ namespace NetSdrClientApp.Networking
         private readonly int _port;
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
-        private CancellationTokenSource? _cts;
+        private CancellationTokenSource? _cts = null;
 
         public bool Connected => _tcpClient != null && _tcpClient.Connected && _stream != null;
 
@@ -100,7 +100,7 @@ namespace NetSdrClientApp.Networking
                 {
                     Console.WriteLine($"Starting listening for incomming messages.");
 
-                    while (!_cts.Token.IsCancellationRequested)
+                    while (!(_cts?.Token.IsCancellationRequested ?? true))
                     {
                         byte[] buffer = new byte[8194];
 
