@@ -30,13 +30,14 @@ namespace NetSdrClientAppTests
             var actualCode = BitConverter.ToInt16(codeBytes.ToArray());
 
             //Assert
-            Assert.That(headerBytes.Count(), Is.EqualTo(2));
-            Assert.That(msg.Length, Is.EqualTo(actualLength));
-            Assert.That(type, Is.EqualTo(actualType));
-
-            Assert.That(actualCode, Is.EqualTo((short)code));
-
-            Assert.That(parametersBytes.Count(), Is.EqualTo(parametersLength));
+            Assert.Multiple(() =>
+            {
+                Assert.That(headerBytes.Count(), Is.EqualTo(2));
+                Assert.That(msg, Has.Length.EqualTo(actualLength));
+                Assert.That(type, Is.EqualTo(actualType));
+                Assert.That(actualCode, Is.EqualTo((short)code));
+                Assert.That(parametersBytes.Count(), Is.EqualTo(parametersLength));
+            });
         }
 
         [Test]
@@ -57,11 +58,13 @@ namespace NetSdrClientAppTests
             var actualLength = num - ((int)actualType << 13);
 
             //Assert
-            Assert.That(headerBytes.Count(), Is.EqualTo(2));
-            Assert.That(msg.Length, Is.EqualTo(actualLength));
-            Assert.That(type, Is.EqualTo(actualType));
-
-            Assert.That(parametersBytes.Count(), Is.EqualTo(parametersLength));
+            Assert.Multiple(() =>
+            {
+                Assert.That(headerBytes.Count(), Is.EqualTo(2));
+                Assert.That(msg, Has.Length.EqualTo(actualLength));
+                Assert.That(type, Is.EqualTo(actualType));
+                Assert.That(parametersBytes.Count(), Is.EqualTo(parametersLength));
+            });
         }
 
         [Test]
