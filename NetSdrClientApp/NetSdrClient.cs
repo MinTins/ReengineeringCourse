@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using NetSdrClientApp.Messages;
 using NetSdrClientApp.Networking;
 using System;
@@ -114,6 +115,7 @@ namespace NetSdrClientApp
             return false;
         }
 
+        [ExcludeFromCodeCoverage] // FileStream I/O — not suitable for unit testing
         private static void _udpClient_MessageReceived(object? sender, byte[] e)
         {
             NetSdrMessageHelper.TranslateMessage(e, out _, out _, out _, out byte[] body);
