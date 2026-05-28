@@ -5,6 +5,8 @@ using EchoTcpServer;
 /// <summary>
 /// Entry point. Not for review — infrastructure/composition root only.
 /// </summary>
+namespace EchoTcpServer
+{
 internal static class Program
 {
     public static async Task Main(string[] args)
@@ -28,4 +30,5 @@ internal static class Program
         server.Stop();
         Console.WriteLine("Sender stopped.");
     }
+}
 }
