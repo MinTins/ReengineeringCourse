@@ -99,14 +99,17 @@ namespace EchoServerTests
             // Act: надіслати дані і прочитати echo
             byte[] sent = new byte[] { 0x01, 0x02, 0x03, 0x04 };
             var clientStream = clientTcp.GetStream();
-            await clientStream.WriteAsync(sent, 0, sent.Length);
+            await clientStream.WriteAsync(sent.AsMemory(0, sent.Length));
 
             byte[] received = new byte[sent.Length];
-            int bytesRead = await clientStream.ReadAsync(received, 0, received.Length);
+            int bytesRead = await clientStream.ReadAsync(received.AsMemory(0, received.Length));
 
             // Assert
-            Assert.That(bytesRead, Is.EqualTo(sent.Length));
-            Assert.That(received, Is.EqualTo(sent));
+            Assert.Multiple(() =>
+            {
+                Assert.That(bytesRead, Is.EqualTo(sent.Length));
+                Assert.That(received, Is.EqualTo(sent));
+            });
 
             // Cleanup
             cts.Cancel();

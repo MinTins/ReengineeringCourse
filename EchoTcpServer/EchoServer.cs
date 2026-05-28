@@ -44,7 +44,7 @@ namespace EchoTcpServer
         }
 
         // internal — accessible from EchoServerTests via InternalsVisibleTo
-        internal async Task HandleClientAsync(TcpClient client, CancellationToken token)
+        internal static async Task HandleClientAsync(TcpClient client, CancellationToken token)
         {
             using NetworkStream stream = client.GetStream();
             try
@@ -53,9 +53,9 @@ namespace EchoTcpServer
                 int bytesRead;
 
                 while (!token.IsCancellationRequested &&
-                       (bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+                       (bytesRead = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), token)) > 0)
                 {
-                    await stream.WriteAsync(buffer, 0, bytesRead, token);
+                    await stream.WriteAsync(buffer.AsMemory(0, bytesRead), token);
                     Console.WriteLine($"Echoed {bytesRead} bytes to the client.");
                 }
             }

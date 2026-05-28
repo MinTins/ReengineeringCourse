@@ -5,7 +5,7 @@ using EchoTcpServer;
 /// <summary>
 /// Entry point. Not for review — infrastructure/composition root only.
 /// </summary>
-internal class Program
+internal static class Program
 {
     public static async Task Main(string[] args)
     {
@@ -19,7 +19,10 @@ internal class Program
         sender.StartSending(5000);
 
         Console.WriteLine("Press 'q' to quit...");
-        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Q) { }
+        while (Console.ReadKey(intercept: true).Key != ConsoleKey.Q)
+    {
+        // waiting for quit key
+    }
 
         sender.StopSending();
         server.Stop();
