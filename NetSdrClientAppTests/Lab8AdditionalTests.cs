@@ -150,5 +150,25 @@ namespace NetSdrClientAppTests
             _tcpMock.Verify(tcp => tcp.Disconnect(), Times.Once);
         }
 
+        [Test]
+        public void TcpMessageReceived_WithoutPendingRequest_DoesNotThrow()
+        {
+            // Якщо MessageReceived спрацьовує без pending SendTcpRequest
+            // tcs == null — має мовчки проігнорувати
+            Assert.DoesNotThrow(() =>
+                _tcpMock.Raise(tcp => tcp.MessageReceived += null,
+                    _tcpMock.Object, new byte[] { 0x01 })
+            );
+        }
+
+        [Test]
+        public async Task ChangeFrequencyAsync_NoConnection_ReturnsWithoutSending()
+        {
+            // EnsureConnected повертає false → метод виходить
+            _tcpMock.Setup(tcp => tcp.Connected).Returns(false);
+            await _client.ChangeFrequencyAsync(100_000_000L, 0);
+            _tcpMock.Verify(tcp => tcp.SendMessageAsync(It.IsAny<byte[]>()), Times.Never);
+        }
+
     }
 }
